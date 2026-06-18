@@ -59,7 +59,6 @@ pacientesController.updatePacientes = async (req, res) => {
             await cloudinary.uploader.destroy(pacientesFound.public_id);
         }
         updateData.profilePhoto = req.file.path;
-        updateData. public_id = req.file.FileName;
 
         await deliveryDriverModel.findByIDAndUpdate(req.params.id, updateData,{
             new: true,

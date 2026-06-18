@@ -1,5 +1,5 @@
 import RegisterpacientesModel from "../models/Pacientes.js";
-
+import {v2 as cloudinary} from "cloudinary"; 
 import {config} from "../../config.js"
 
 //Creo un array de funcione
@@ -19,6 +19,35 @@ registerPacientesController.register = async (req, res) => {
         loginAttempts,
         timeOut,
     } = req.body;
+}
+
+//INSERT
+pacientesController.insertPatients = async (req,res) => {
+    try {
+        const {
+            name, 
+            lastName,
+            password,
+            phone,
+            address,
+            phoneEmergencyContacts 
+        }= req.body; 
+
+        const newPaciente = new pacientesModel({
+            name, 
+            lastName,
+            password,
+            phone,
+            address,
+            phoneEmergencyContacts,
+            profilePhoto: req.file.path,
+        })
+        await newPaciente.save();
+        return req.sstatus(200).json({message: "Paciente guardado"});
+    } catch (error) {
+        console.log("error" + error);
+        return res.status(500).json({ message: "Internal server error"});
+    }
 }
 
 try {

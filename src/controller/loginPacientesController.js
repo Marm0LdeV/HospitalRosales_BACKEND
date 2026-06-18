@@ -22,7 +22,7 @@ loginPacientesController.login = async (req, res) => {
         if(!isMatch) {
             //Sumar intentos si la contraseña es erronea
             userFound.loginAttemps = (userFound.loginAttemps || 0) + 1;
-        }
+      
 
         //Bloquear cuenta despues de 5 intentos
         if(userFound.loginAttemps >= 5) {
@@ -32,13 +32,34 @@ loginPacientesController.login = async (req, res) => {
             await userFound.save();
 
             return res.status(403).json({message: "Cuenta bloqueada"});
-        }
-
+        };
+         
         await userFound.save();
-        return res.status(401).json({message: "Contraseña incorrecta"})
+        return res.status(401).json({message: "Contraseña incorrecta"});
+          }
+        //Si escribe bien los datos
+        //Omitir los intentos
+        userFound.loginAttemps = 0;
+        userFound.timeOut = null;
+        await userFound.save();
 
+        //Crear el token
+        const token = JsonWebTokenError.sign(
+            //#1- ¿Que vamos a guardar?
+            {id: userFound._id, usertype: "patient"},
+            config.JWT.secret,
+            {expiresIn: "30d"},
+        );
+
+        res.cookie("authcookie", token);
+
+        //Listo 
+        return res.status(200).json({message: "Login exitoso"});
     } catch (error) {
-        
+        console.log("error" + error);
+        return res.status(500).json({message: "Internal error"});
     }
-}
+};
+
+export default loginPacientesController;
 
