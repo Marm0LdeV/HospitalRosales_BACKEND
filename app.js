@@ -23,6 +23,8 @@ app.use(express.json());
 
 //ENDPOINTS
 
+app-use("/api/pacientes", pacientesRoutes);
+
 
 
 
